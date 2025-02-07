@@ -138,6 +138,50 @@ app.get("/profile", authenticate, async (req, res) => {
   }
 });
 
+app.post("/addTrick", authenticate, async (req, res) => {
+  const { trick_name, difficulty, description } = req.body;
+
+  if (!trick_name) {
+    return res.status(400).json({ error: "Trick name is required" });
+  }
+
+  try {
+    const result = await pool.query(
+      "INSERT INTO user_tricks (user_id, trick_name, difficulty, description) VALUES ($1, $2, $3, $4) RETURNING *",
+      [req.userId, trick_name, difficulty, description]
+    );
+
+    res
+      .status(201)
+      .json({ message: "Trick added successfully", trick: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/myTricks", authenticate, async (req, res) => {
+  try {
+    // Query to get all trick details by joining user_tricks and tricks tables
+    const result = await pool.query(
+      "SELECT t.id, t.name, t.description, t.difficulty " + // Removed extra comma here
+        "FROM user_tricks ut " +
+        "JOIN tricks t ON ut.trick_id = t.id " + // Join with tricks table
+        "WHERE ut.user_id = $1",
+      [req.userId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "No tricks found for this user" });
+    }
+
+    res.status(200).json({ tricks: result.rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Start the server
 app.listen(5001, () => {
   console.log("Server running on port 5001");

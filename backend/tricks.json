@@ -1,0 +1,27 @@
+[
+  {
+    "trick_name": "Ollie",
+    "difficulty": "Beginner",
+    "description": "A basic jump without using hands, the foundation of most tricks."
+  },
+  {
+    "trick_name": "Kickflip",
+    "difficulty": "Intermediate",
+    "description": "A trick where the board flips 360° along its axis using the front foot."
+  },
+  {
+    "trick_name": "Pop Shove-It",
+    "difficulty": "Beginner",
+    "description": "A trick where the board spins 180° without flipping, using a scooping motion."
+  },
+  {
+    "trick_name": "Heelflip",
+    "difficulty": "Intermediate",
+    "description": "Similar to a kickflip but the board flips in the opposite direction using the heel."
+  },
+  {
+    "trick_name": "Tre Flip",
+    "difficulty": "Advanced",
+    "description": "A 360 flip where the board spins 360° while also flipping."
+  }
+]

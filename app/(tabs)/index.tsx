@@ -9,6 +9,7 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  FlatList,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
@@ -16,12 +17,17 @@ import { Ionicons } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import styles from "../styles"; // Import your styles
+import ParallaxScrollView from "@/components/ParallaxScrollView";
+import { LinearGradient } from "expo-linear-gradient";
+import { IconSymbol } from "@/components/ui/IconSymbol";
+import React from "react";
 
 export default function ProfilePage() {
   const [loginEmail, setLoginEmail] = useState(""); // For login
   const [loginPassword, setLoginPassword] = useState(""); // For login
   const [isLoading, setIsLoading] = useState(false);
   const [profileData, setProfileData] = useState(null); // For profile data
+  const [tricks, setTricks] = useState([]); // For user's tricks
   const [isAuthenticated, setIsAuthenticated] = useState(false); // For managing authentication state
   const [selectedCard, setSelectedCard] = useState(null); // For tracking selected card
 
@@ -111,7 +117,8 @@ export default function ProfilePage() {
 
         Alert.alert("Success", "Login successful!");
         setIsAuthenticated(true); // Mark user as authenticated
-        fetchProfile(data.token); // Fetch profile after successful login
+        fetchProfile(data.token);
+        fetchUserTricks(data.token); // Fetch profile after successful login
       } else {
         Alert.alert("Error", data.error || "Something went wrong.");
       }
@@ -145,6 +152,28 @@ export default function ProfilePage() {
     }
   };
 
+  // Fetch user's tricks after login
+  const fetchUserTricks = async (token: string) => {
+    try {
+      const response = await fetch("http://localhost:5001/myTricks", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch tricks");
+      }
+
+      const data = await response.json();
+      setTricks(data.tricks); // Assuming the tricks are in the `tricks` key
+    } catch (error) {
+      console.error("Error fetching tricks:", error);
+      Alert.alert("Error", "Unable to fetch tricks.");
+    }
+  };
+
   // Handle logout by clearing AsyncStorage and updating state
   const handleLogout = async () => {
     try {
@@ -171,8 +200,8 @@ export default function ProfilePage() {
   }, []);
 
   return (
-    <ThemedView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+    <ScrollView style={styles.containerMain}>
+      <ThemedView style={styles.container}>
         {/* Conditionally render the title, message, and login form based on isAuthenticated */}
         {!isAuthenticated && (
           <>
@@ -222,10 +251,38 @@ export default function ProfilePage() {
         {/* Profile Display */}
         {isAuthenticated && profileData && (
           <ThemedView style={styles.profileContainer}>
-            <Text style={styles.profileText}>
-              Welcome, {profileData.username}!
-            </Text>
-            <Text style={styles.profileText}>Email: {profileData.email}</Text>
+            <View style={styles.profileCard}>
+              <Text style={styles.profileName}>@{profileData.username}</Text>
+              <Text style={styles.profileEmail}>{profileData.email}</Text>
+            </View>
+
+            {/* Display Tricks */}
+            <View style={styles.tricksContainer}>
+              <Text style={styles.trickTitle}>My Tricks</Text>
+              {tricks.length > 0 ? (
+                <FlatList
+                  data={tricks}
+                  horizontal
+                  pagingEnabled
+                  snapToAlignment="center"
+                  showsHorizontalScrollIndicator={false}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={({ item }) => (
+                    <View style={styles.trickItem}>
+                      <Text style={styles.trickName}>{item.name}</Text>
+                      <Text style={styles.trickDifficulty}>
+                        Difficulty: {item.difficulty}
+                      </Text>
+                      <Text style={styles.trickDescription}>
+                        {item.description}
+                      </Text>
+                    </View>
+                  )}
+                />
+              ) : (
+                <Text style={styles.noTricksText}>No tricks yet</Text>
+              )}
+            </View>
 
             {/* Quick Access Cards */}
             <View style={styles.cards}>
@@ -263,6 +320,7 @@ export default function ProfilePage() {
                 </View>
               </View>
             )}
+
             <View style={styles.logoutButtonContainer}>
               <TouchableOpacity
                 style={[styles.button, isLoading && styles.buttonDisabled]}
@@ -281,7 +339,7 @@ export default function ProfilePage() {
         )}
 
         {/* Full View of Selected Card */}
-      </ScrollView>
-    </ThemedView>
+      </ThemedView>
+    </ScrollView>
   );
 }
