@@ -3,10 +3,17 @@ const express = require("express");
 const bcrypt = require("bcryptjs"); // For hashing passwords
 const jwt = require("jsonwebtoken"); // For JWT token
 const { Pool } = require("pg"); // PostgreSQL client
+const cors = require("cors");
 
 // Initialize Express app
 const app = express();
+const corsOptions = {
+  origin: "http://localhost:8081", // Adjust this based on your frontend URL
+  methods: "GET,POST,PUT,DELETE",
+  allowedHeaders: "Content-Type,Authorization",
+};
 
+app.use(cors(corsOptions));
 // PostgreSQL pool setup
 const pool = new Pool({
   user: process.env.DB_USER,

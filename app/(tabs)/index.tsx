@@ -11,6 +11,7 @@ import {
   ScrollView,
   FlatList,
 } from "react-native";
+import DropdownPickerComponent from "@/components/DropdownPicker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -21,6 +22,7 @@ import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { LinearGradient } from "expo-linear-gradient";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import React from "react";
+import InlineDropdown from "@/components/InlineDropdown";
 
 export default function ProfilePage() {
   const [loginEmail, setLoginEmail] = useState(""); // For login
@@ -30,6 +32,8 @@ export default function ProfilePage() {
   const [tricks, setTricks] = useState([]); // For user's tricks
   const [isAuthenticated, setIsAuthenticated] = useState(false); // For managing authentication state
   const [selectedCard, setSelectedCard] = useState(null); // For tracking selected card
+  // Tricks data and selection state
+  const [selectedTrick, setSelectedTrick] = useState("");
 
   // Define Quick Access Cards
   const quickAccessCards = [
@@ -192,12 +196,20 @@ export default function ProfilePage() {
       const token = await AsyncStorage.getItem("token");
       if (token) {
         setIsAuthenticated(true);
-        fetchProfile(token); // Fetch profile if token exists
+        fetchProfile(token); // Fetch profile data
+        fetchUserTricks(token); // Fetch fresh trick data
       }
     };
 
     checkAuthStatus();
   }, []);
+
+  const trickOptions = tricks.map((trick) => ({
+    label: trick.name,
+    value: trick.id,
+  }));
+
+  const selectedTrickInfo = tricks.find((trick) => trick.id === selectedTrick);
 
   return (
     <ScrollView style={styles.containerMain}>
@@ -255,36 +267,28 @@ export default function ProfilePage() {
               <Text style={styles.profileName}>@{profileData.username}</Text>
               <Text style={styles.profileEmail}>{profileData.email}</Text>
             </View>
-
             {/* Display Tricks */}
-            <View style={styles.tricksContainer}>
-              <Text style={styles.trickTitle}>My Tricks</Text>
-              {tricks.length > 0 ? (
-                <FlatList
-                  data={tricks}
-                  horizontal
-                  pagingEnabled
-                  snapToAlignment="center"
-                  showsHorizontalScrollIndicator={false}
-                  keyExtractor={(item, index) => index.toString()}
-                  renderItem={({ item }) => (
-                    <View style={styles.trickItem}>
-                      <Text style={styles.trickName}>{item.name}</Text>
-                      <Text style={styles.trickDifficulty}>
-                        Difficulty: {item.difficulty}
-                      </Text>
-                      <Text style={styles.trickDescription}>
-                        {item.description}
-                      </Text>
-                    </View>
-                  )}
-                />
-              ) : (
-                <Text style={styles.noTricksText}>No tricks yet</Text>
-              )}
-            </View>
-
-            {/* Quick Access Cards */}
+            {/* Inline Dropdown for Trick Selection */}
+            <InlineDropdown
+              items={trickOptions}
+              selectedValue={selectedTrick}
+              setSelectedValue={setSelectedTrick}
+            />
+            {/* Trick Details (if one is selected) */}
+            {selectedTrickInfo && (
+              <View style={localStyles.trickDetails}>
+                <Text style={localStyles.trickTitle}>
+                  {selectedTrickInfo.name}
+                </Text>
+                <Text style={localStyles.trickDifficulty}>
+                  Difficulty: {selectedTrickInfo.difficulty}
+                </Text>
+                <Text style={localStyles.trickDescription}>
+                  {selectedTrickInfo.description}
+                </Text>
+              </View>
+            )}
+            ;{/* Quick Access Cards */}
             <View style={styles.cards}>
               {quickAccessCards.map((card, index) => (
                 <TouchableOpacity
@@ -320,7 +324,6 @@ export default function ProfilePage() {
                 </View>
               </View>
             )}
-
             <View style={styles.logoutButtonContainer}>
               <TouchableOpacity
                 style={[styles.button, isLoading && styles.buttonDisabled]}
@@ -333,7 +336,6 @@ export default function ProfilePage() {
               </TouchableOpacity>
               {isLoading && <ActivityIndicator size="small" color="#FFB400" />}
             </View>
-
             {/* Logout Button */}
           </ThemedView>
         )}
@@ -343,3 +345,30 @@ export default function ProfilePage() {
     </ScrollView>
   );
 }
+
+// Local styles for trick details display
+const localStyles = StyleSheet.create({
+  trickDetails: {
+    marginVertical: 15,
+    marginHorizontal: 15,
+    padding: 25,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+  },
+  trickTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: 5,
+  },
+  trickDifficulty: {
+    fontSize: 16,
+    marginBottom: 5,
+    color: "#ccc",
+  },
+  trickDescription: {
+    fontSize: 14,
+    color: "#ddd",
+  },
+});

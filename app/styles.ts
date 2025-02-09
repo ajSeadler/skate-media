@@ -89,10 +89,10 @@ const styles = StyleSheet.create({
   profileCard: {
     backgroundColor: "transparent", // White background for a clean look
     marginTop: 20,
-    borderRadius: 12, // Rounded corners
+    marginBottom: 20,
     padding: 20, // Internal spacing
-    borderBottomWidth: 2,
-    borderBottomColor: "#666",
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
     width: "100%", // Adjust width as needed
     margin: "auto",
     alignSelf: "center", // Center horizontally
@@ -144,6 +144,8 @@ const styles = StyleSheet.create({
   logoutButtonContainer: {
     marginTop: 20,
     borderRadius: 8,
+    width: "75%",
+    margin: "auto",
     backgroundColor: "#FF6663",
   },
   selectedCardContainer: {
@@ -180,10 +182,8 @@ const styles = StyleSheet.create({
   },
   trickCard: {
     width: "100%",
-    backgroundColor: "white",
     borderRadius: 8,
     padding: 15,
-    marginBottom: 15,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
@@ -227,9 +227,9 @@ const styles = StyleSheet.create({
     width: width, // Ensure each trick takes the full screen width
   },
   trickItem: {
-    width: width - 60, // Slight padding to prevent cutoff
+    width: "50%",
     padding: 20,
-    backgroundColor: "#222",
+    marginBottom: 5,
     borderRadius: 10,
     marginRight: 20, // Space between items
   },
