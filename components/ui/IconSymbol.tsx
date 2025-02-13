@@ -1,22 +1,31 @@
 // This file is a fallback for using MaterialIcons on Android and web.
 
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { SymbolWeight } from 'expo-symbols';
-import React from 'react';
-import { OpaqueColorValue, StyleProp, ViewStyle } from 'react-native';
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { SymbolWeight } from "expo-symbols";
+import React from "react";
+import { OpaqueColorValue, StyleProp, ViewStyle } from "react-native";
 
 // Add your SFSymbol to MaterialIcons mappings here.
 const MAPPING = {
-  // See MaterialIcons here: https://icons.expo.fyi
-  // See SF Symbols in the SF Symbols app on Mac.
-  'house.fill': 'home',
-  'paperplane.fill': 'send',
-  'chevron.left.forwardslash.chevron.right': 'code',
-  'chevron.right': 'chevron-right',
+  "house.fill": "home", // Already mapped
+  "paperplane.fill": "send", // Already mapped
+  "chevron.left.forwardslash.chevron.right": "code", // Already mapped
+  "chevron.right": "chevron-right", // Already mapped
+  "star.fill": "star", // Already mapped
+  gear: "settings", // Already mapped
+  "arrow.down": "arrow-drop-down",
+  "arrow.up": "arrow-drop-up", // New arrow down
+  // New arrow down
+  search: "search", // New search icon
+  info: "info", // New info icon
+  user: "person", // New user icon
+  logout: "exit-to-app", // New logout icon
+  add: "add", // New add icon
+  home: "home", // New home icon
 } as Partial<
   Record<
-    import('expo-symbols').SymbolViewProps['name'],
-    React.ComponentProps<typeof MaterialIcons>['name']
+    import("expo-symbols").SymbolViewProps["name"],
+    React.ComponentProps<typeof MaterialIcons>["name"]
   >
 >;
 
@@ -39,5 +48,12 @@ export function IconSymbol({
   style?: StyleProp<ViewStyle>;
   weight?: SymbolWeight;
 }) {
-  return <MaterialIcons color={color} size={size} name={MAPPING[name]} style={style} />;
+  return (
+    <MaterialIcons
+      color={color}
+      size={size}
+      name={MAPPING[name]}
+      style={style}
+    />
+  );
 }

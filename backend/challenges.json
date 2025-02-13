@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Getting Noticed",
+    "description": "Master 5 tricks.",
+    "difficulty": "Easy",
+    "reward_points": 25
+  },
+  {
+    "name": "Local Pro",
+    "description": "Master 10 tricks.",
+    "difficulty": "Medium",
+    "reward_points": 50
+  },
+  {
+    "name": "Hometown Hero",
+    "description": "Master 15 tricks.",
+    "difficulty": "Medium",
+    "reward_points": 75
+  },
+  {
+    "name": "Am Skater",
+    "description": "Master 20 tricks.",
+    "difficulty": "Hard",
+    "reward_points": 100
+  },
+  {
+    "name": "Pro Skater",
+    "description": "Master all tricks.",
+    "difficulty": "Expert",
+    "reward_points": 200
+  }
+]

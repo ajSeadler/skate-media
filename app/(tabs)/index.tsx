@@ -9,31 +9,48 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  FlatList,
 } from "react-native";
-import DropdownPickerComponent from "@/components/DropdownPicker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import styles from "../styles"; // Import your styles
-import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { LinearGradient } from "expo-linear-gradient";
-import { IconSymbol } from "@/components/ui/IconSymbol";
 import React from "react";
 import InlineDropdown from "@/components/InlineDropdown";
+import ProgressCard from "@/components/ProgressCard";
+import ChallengesCard from "@/components/ChallengesCard";
+import TotalPoints from "@/components/TotalPoints";
+import UserProfile from "@/components/UserProfile";
 
 export default function ProfilePage() {
   const [loginEmail, setLoginEmail] = useState(""); // For login
   const [loginPassword, setLoginPassword] = useState(""); // For login
   const [isLoading, setIsLoading] = useState(false);
   const [profileData, setProfileData] = useState(null); // For profile data
-  const [tricks, setTricks] = useState([]); // For user's tricks
+  const [tricks, setTricks] = useState<Trick[]>([]); // Explicitly set the type of tricks
   const [isAuthenticated, setIsAuthenticated] = useState(false); // For managing authentication state
-  const [selectedCard, setSelectedCard] = useState(null); // For tracking selected card
+  interface Card {
+    Icon: React.ComponentType<any>;
+    title: string;
+    iconName: string;
+    iconColor: string;
+    details?: string;
+    component?: React.ReactNode;
+  }
+
+  const [selectedCard, setSelectedCard] = useState<Card | null>(null);
+
   // Tricks data and selection state
   const [selectedTrick, setSelectedTrick] = useState("");
+
+  interface Trick {
+    id: string;
+    name: string;
+    status: string;
+    difficulty: string;
+    description: string;
+  }
 
   // Define Quick Access Cards
   const quickAccessCards = [
@@ -41,57 +58,80 @@ export default function ProfilePage() {
       Icon: Ionicons,
       title: "Progress",
       iconName: "bar-chart",
-      onPress: () =>
-        setSelectedCard({
-          Icon: Ionicons,
-          title: "Progress",
-          iconName: "bar-chart",
-          details: "Track your trick progress here with detailed stats.",
-          iconColor: "#28a745", // Green color for Progress
-        }),
       iconColor: "#28a745", // Green color for Progress
+      onPress: () => {
+        setSelectedCard((prevSelectedCard) =>
+          prevSelectedCard?.title === "Progress"
+            ? null // Close the card if it's already open
+            : {
+                Icon: Ionicons,
+                title: "Progress",
+                iconName: "bar-chart",
+                details: "Track your trick progress here with detailed stats.",
+                iconColor: "#28a745", // Green color for Progress
+                component: <ProgressCard tricks={tricks} />,
+              }
+        );
+      },
     },
     {
       Icon: Ionicons,
       title: "Challenges",
       iconName: "trophy",
-      onPress: () =>
-        setSelectedCard({
-          Icon: Ionicons,
-          title: "Challenges",
-          iconName: "trophy",
-          details: "Participate in skateboarding challenges to push yourself.",
-          iconColor: "#FFB400", // Same yellow for Challenges
-        }),
-      iconColor: "#FFB400", // Same yellow for Challenges
+      iconColor: "#FFB400", // Yellow for Challenges
+      onPress: () => {
+        setSelectedCard((prevSelectedCard) =>
+          prevSelectedCard?.title === "Challenges"
+            ? null // Close the card if it's already open
+            : {
+                Icon: Ionicons,
+                title: "Challenges",
+                iconName: "trophy",
+                iconColor: "#FFB400", // Yellow for Challenges
+                component: (
+                  <ChallengesCard tricks={tricks} videoUploaded={false} />
+                ),
+              }
+        );
+      },
     },
     {
       Icon: Ionicons,
       title: "Recovery",
       iconName: "medkit",
-      onPress: () =>
-        setSelectedCard({
-          Icon: Ionicons,
-          title: "Recovery",
-          iconName: "medkit",
-          details: "View your recovery plans and progress.",
-          iconColor: "#FF0000", // Red color for Recovery
-        }),
-      iconColor: "#FF0000", // Red color for Recovery
+      iconColor: "#FF0000", // Red for Recovery
+      onPress: () => {
+        setSelectedCard((prevSelectedCard) =>
+          prevSelectedCard?.title === "Recovery"
+            ? null // Close the card if it's already open
+            : {
+                Icon: Ionicons,
+                title: "Recovery",
+                iconName: "medkit",
+                details: "View your recovery plans and progress.",
+                iconColor: "#FF0000", // Red for Recovery
+              }
+        );
+      },
     },
     {
       Icon: Ionicons,
       title: "Statistics",
       iconName: "analytics",
-      onPress: () =>
-        setSelectedCard({
-          Icon: Ionicons,
-          title: "Statistics",
-          iconName: "analytics",
-          details: "Analyze your overall fitness statistics.",
-          iconColor: "#1E90FF", // Blue color for Statistics
-        }),
-      iconColor: "#1E90FF", // Blue color for Statistics
+      iconColor: "#1E90FF", // Blue for Statistics
+      onPress: () => {
+        setSelectedCard((prevSelectedCard) =>
+          prevSelectedCard?.title === "Statistics"
+            ? null // Close the card if it's already open
+            : {
+                Icon: Ionicons,
+                title: "Statistics",
+                iconName: "analytics",
+                details: "Analyze your overall fitness statistics.",
+                iconColor: "#1E90FF", // Blue for Statistics
+              }
+        );
+      },
     },
   ];
 
@@ -105,6 +145,11 @@ export default function ProfilePage() {
     setIsLoading(true);
 
     try {
+      console.log(
+        "Login Request:",
+        JSON.stringify({ email: loginEmail, password: loginPassword })
+      );
+
       const response = await fetch("http://localhost:5001/login", {
         method: "POST",
         headers: {
@@ -114,20 +159,20 @@ export default function ProfilePage() {
       });
 
       const data = await response.json();
+      console.log("Response Status:", response.status);
+      console.log("Response Data:", data);
 
       if (response.ok) {
-        // Store the token in AsyncStorage
         await AsyncStorage.setItem("token", data.token);
-
         Alert.alert("Success", "Login successful!");
-        setIsAuthenticated(true); // Mark user as authenticated
+        setIsAuthenticated(true);
         fetchProfile(data.token);
-        fetchUserTricks(data.token); // Fetch profile after successful login
+        fetchUserTricks(data.token);
       } else {
         Alert.alert("Error", data.error || "Something went wrong.");
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Login Error:", error);
       Alert.alert("Error", "Unable to connect to the server.");
     } finally {
       setIsLoading(false);
@@ -175,6 +220,44 @@ export default function ProfilePage() {
     } catch (error) {
       console.error("Error fetching tricks:", error);
       Alert.alert("Error", "Unable to fetch tricks.");
+    }
+  };
+
+  const updateTrickStatus = async (trick_id: string, status: string) => {
+    if (!trick_id || !status) {
+      Alert.alert("Error", "Invalid trick or status");
+      return;
+    }
+
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const response = await fetch("http://localhost:5001/updateTrickStatus", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ trick_id, status }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Update the tricks array with the new status
+        setTricks((prevTricks) =>
+          prevTricks.map((trick) =>
+            trick.id === trick_id
+              ? { ...trick, status: data.updatedTrick.status }
+              : trick
+          )
+        );
+        Alert.alert("Success", "Trick status updated successfully!");
+      } else {
+        Alert.alert("Error", data.error || "Failed to update trick status");
+      }
+    } catch (error) {
+      console.error("Error updating trick status:", error);
+      Alert.alert("Error", "Unable to update trick status");
     }
   };
 
@@ -264,8 +347,26 @@ export default function ProfilePage() {
         {isAuthenticated && profileData && (
           <ThemedView style={styles.profileContainer}>
             <View style={styles.profileCard}>
-              <Text style={styles.profileName}>@{profileData.username}</Text>
-              <Text style={styles.profileEmail}>{profileData.email}</Text>
+              <UserProfile />
+
+              <TotalPoints tricks={tricks} />
+              <View style={styles.logoutButtonContainer}>
+                <TouchableOpacity
+                  style={[
+                    styles.logoutButton,
+                    isLoading && styles.buttonDisabled,
+                  ]}
+                  onPress={handleLogout}
+                  disabled={isLoading}
+                >
+                  <ThemedText style={styles.logoutButtonText} type="link">
+                    {isLoading ? "Logging Out..." : "Log Out"}
+                  </ThemedText>
+                </TouchableOpacity>
+                {isLoading && (
+                  <ActivityIndicator size="small" color="#FFB400" />
+                )}
+              </View>
             </View>
             {/* Display Tricks */}
             {/* Inline Dropdown for Trick Selection */}
@@ -277,15 +378,55 @@ export default function ProfilePage() {
             {/* Trick Details (if one is selected) */}
             {selectedTrickInfo && (
               <View style={localStyles.trickDetails}>
-                <Text style={localStyles.trickTitle}>
+                <ThemedText style={localStyles.trickTitle} type="title">
                   {selectedTrickInfo.name}
-                </Text>
+                </ThemedText>
+                <ThemedText style={localStyles.trickDifficulty} type="default">
+                  Status: {selectedTrickInfo.status}
+                </ThemedText>
                 <Text style={localStyles.trickDifficulty}>
                   Difficulty: {selectedTrickInfo.difficulty}
                 </Text>
-                <Text style={localStyles.trickDescription}>
+                <ThemedText style={localStyles.trickDescription} type="default">
                   {selectedTrickInfo.description}
-                </Text>
+                </ThemedText>
+
+                {/* Button to update trick status */}
+                <TouchableOpacity
+                  style={[
+                    localStyles.actionButton,
+                    isLoading && localStyles.actionButtonDisabled,
+                    selectedTrickInfo.status === "mastered"
+                      ? localStyles.actionButtonMastered // Green button for mastered status
+                      : localStyles.actionButtonUnmastered, // Regular button for unmastered
+                  ]}
+                  onPress={() =>
+                    updateTrickStatus(selectedTrickInfo.id, "mastered")
+                  }
+                  disabled={
+                    isLoading || selectedTrickInfo.status === "mastered"
+                  } // Disable if already mastered
+                >
+                  <Text
+                    style={[
+                      localStyles.actionButtonText,
+                      isLoading && localStyles.actionButtonTextDisabled,
+                      selectedTrickInfo.status === "mastered"
+                        ? localStyles.actionButtonTextMastered // Green text for mastered
+                        : localStyles.actionButtonTextUnmastered, // Regular text for unmastered
+                    ]}
+                  >
+                    {isLoading
+                      ? "Updating..."
+                      : selectedTrickInfo.status === "mastered"
+                      ? "Mastered"
+                      : "Mark as Mastered"}
+                  </Text>
+                </TouchableOpacity>
+
+                {isLoading && (
+                  <ActivityIndicator size="small" color="#FFB400" />
+                )}
               </View>
             )}
             ;{/* Quick Access Cards */}
@@ -315,27 +456,14 @@ export default function ProfilePage() {
                     color={selectedCard.iconColor} // Set the icon color dynamically
                     style={styles.selectedCardIcon}
                   />
-                  <Text style={styles.selectedCardTitle}>
+                  {/* <Text style={styles.selectedCardTitle}>
                     {selectedCard.title}
-                  </Text>
-                  <Text style={styles.selectedCardDetails}>
-                    {selectedCard.details}
-                  </Text>
+                  </Text> */}
+
+                  <div>{selectedCard.component}</div>
                 </View>
               </View>
             )}
-            <View style={styles.logoutButtonContainer}>
-              <TouchableOpacity
-                style={[styles.button, isLoading && styles.buttonDisabled]}
-                onPress={handleLogout}
-                disabled={isLoading}
-              >
-                <Text style={styles.buttonText}>
-                  {isLoading ? "Logging Out..." : "Log Out"}
-                </Text>
-              </TouchableOpacity>
-              {isLoading && <ActivityIndicator size="small" color="#FFB400" />}
-            </View>
             {/* Logout Button */}
           </ThemedView>
         )}
@@ -353,22 +481,62 @@ const localStyles = StyleSheet.create({
     marginHorizontal: 15,
     padding: 25,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#fff",
     borderRadius: 8,
   },
   trickTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#fff",
-    marginBottom: 5,
+    marginBottom: 2,
   },
   trickDifficulty: {
-    fontSize: 16,
-    marginBottom: 5,
-    color: "#ccc",
+    fontSize: 13,
+    marginBottom: 2,
   },
   trickDescription: {
-    fontSize: 14,
-    color: "#ddd",
+    fontSize: 16,
+  },
+  // Regular button styles
+  actionButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    backgroundColor: "#FFB400", // Neutral button color for unmastered
+  },
+  actionButtonDisabled: {
+    backgroundColor: "#D3D3D3", // Disabled button color
+  },
+
+  // Green (celebratory) button for mastered
+  actionButtonMastered: {
+    backgroundColor: "#28a745", // Green color for mastered status
+
+    marginTop: 10,
+  },
+
+  // Regular button for unmastered
+  actionButtonUnmastered: {
+    backgroundColor: "#FFB400", // Neutral button color for unmastered
+    marginTop: 10,
+  },
+
+  // Text styles
+  actionButtonText: {
+    color: "#FFFFFF", // Default text color
+    fontSize: 16,
+    textAlign: "center",
+  },
+  actionButtonTextDisabled: {
+    color: "#A9A9A9", // Disabled text color
+  },
+
+  // Green text for mastered
+  actionButtonTextMastered: {
+    color: "#FFFFFF", // White text on green
+  },
+
+  // Regular text for unmastered
+  actionButtonTextUnmastered: {
+    color: "#FFFFFF", // Regular white text
   },
 });

@@ -2,26 +2,103 @@
   {
     "trick_name": "Ollie",
     "difficulty": "Beginner",
-    "description": "A basic jump without using hands, the foundation of most tricks."
+    "description": "A basic jump without using hands, the foundation of most tricks.",
+    "status": "learning"
   },
   {
     "trick_name": "Kickflip",
     "difficulty": "Intermediate",
-    "description": "A trick where the board flips 360° along its axis using the front foot."
+    "description": "A trick where the board flips 360° along its axis using the front foot.",
+    "status": "learning"
   },
   {
     "trick_name": "Pop Shove-It",
     "difficulty": "Beginner",
-    "description": "A trick where the board spins 180° without flipping, using a scooping motion."
+    "description": "A trick where the board spins 180° without flipping, using a scooping motion.",
+    "status": "learning"
   },
   {
     "trick_name": "Heelflip",
     "difficulty": "Intermediate",
-    "description": "Similar to a kickflip but the board flips in the opposite direction using the heel."
+    "description": "Similar to a kickflip but the board flips in the opposite direction using the heel.",
+    "status": "learning"
   },
   {
     "trick_name": "Tre Flip",
     "difficulty": "Advanced",
-    "description": "A 360 flip where the board spins 360° while also flipping."
+    "description": "A 360 flip where the board spins 360° while also flipping.",
+    "status": "learning"
+  },
+  {
+    "trick_name": "Shuvit",
+    "difficulty": "Beginner",
+    "description": "A basic trick where the board spins 180° without flipping, using the back foot.",
+    "status": "learning"
+  },
+  {
+    "trick_name": "Frontside 180",
+    "difficulty": "Intermediate",
+    "description": "A 180° spin where the rider turns to face the front, while the board also spins 180°.",
+    "status": "learning"
+  },
+  {
+    "trick_name": "Backside 180",
+    "difficulty": "Intermediate",
+    "description": "A 180° spin where the rider turns to face the back, while the board also spins 180°.",
+    "status": "learning"
+  },
+  {
+    "trick_name": "Bigspin",
+    "difficulty": "Advanced",
+    "description": "A 360° spin of the board while the rider spins 180° in the opposite direction.",
+    "status": "learning"
+  },
+  {
+    "trick_name": "Nollie",
+    "difficulty": "Intermediate",
+    "description": "A trick similar to the ollie, but performed with the front foot pushing down on the nose of the board.",
+    "status": "learning"
+  },
+  {
+    "trick_name": "Laser Flip",
+    "difficulty": "Advanced",
+    "description": "A combination of a 360° flip and a 360° shove-it, where the board spins and flips simultaneously.",
+    "status": "learning"
+  },
+  {
+    "trick_name": "Hardflip",
+    "difficulty": "Advanced",
+    "description": "A trick where the board does a kickflip while simultaneously spinning 180°.",
+    "status": "learning"
+  },
+  {
+    "trick_name": "Inward Heelflip",
+    "difficulty": "Advanced",
+    "description": "A flip trick where the board flips inward while also performing a 180° spin.",
+    "status": "learning"
+  },
+  {
+    "trick_name": "Bigspin Flip",
+    "difficulty": "Advanced",
+    "description": "A combination of a bigspin and a flip, where the board spins 360° while flipping.",
+    "status": "learning"
+  },
+  {
+    "trick_name": "Nollie Flip",
+    "difficulty": "Intermediate",
+    "description": "A flip trick performed while rolling in nollie, where the rider flicks the board with the front foot.",
+    "status": "learning"
+  },
+  {
+    "trick_name": "Varial Flip",
+    "difficulty": "Intermediate",
+    "description": "A flip trick where the board performs a kickflip while spinning 180° in the horizontal direction.",
+    "status": "learning"
+  },
+  {
+    "trick_name": "Double Flip",
+    "difficulty": "Advanced",
+    "description": "A flip trick where the board flips two times in the air before landing.",
+    "status": "learning"
   }
 ]

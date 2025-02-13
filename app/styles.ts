@@ -5,27 +5,24 @@ const { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   containerMain: {
-    flex: 1,
-    height: "100%",
+    // backgroundColor: "#5F634F",
   },
   container: {
     flex: 1,
     height: "100%",
     justifyContent: "center",
+    backgroundColor: "transparent",
     textAlign: "center",
     alignContent: "center",
-    backgroundColor: "transparent",
   },
-  gradientBackground: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
+
   titleContainer: {
     marginBottom: 30,
     textAlign: "center",
     justifyContent: "center",
-    alignItems: "center",
     backgroundColor: "transparent",
+
+    alignItems: "center",
     marginTop: 100,
   },
   subtitle: {
@@ -38,9 +35,7 @@ const styles = StyleSheet.create({
     padding: 25,
     borderRadius: 12,
     alignItems: "center",
-    backgroundColor: "transparent",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 5 },
+
     shadowOpacity: 0.1,
     shadowRadius: 12,
     elevation: 4,
@@ -65,31 +60,27 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 8,
-    backgroundColor: "#399E5A", // Green color
+    borderWidth: 2, // Increase the border width to make it more noticeable
+    borderColor: "#fff", // You can try a different color if #fff isn't visible
+    backgroundColor: "transparent",
     alignItems: "center",
+    justifyContent: "center", // Ensure vertical centering of content
   },
+
   buttonDisabled: {
     backgroundColor: "#999999", // Disabled button color
   },
   buttonText: {
     fontSize: 18,
-    color: "#222",
+    color: "#fff",
     fontWeight: "600",
   },
   profileContainer: {
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 5 },
     backgroundColor: "transparent",
-    shadowOpacity: 0.1,
-    paddingBottom: 100,
-    shadowRadius: 12,
-    elevation: 4,
   },
   profileCard: {
-    backgroundColor: "transparent", // White background for a clean look
-    marginTop: 20,
     marginBottom: 20,
+
     padding: 20, // Internal spacing
     borderBottomWidth: 1,
     borderBottomColor: "#ddd",
@@ -100,18 +91,15 @@ const styles = StyleSheet.create({
   profileName: {
     fontSize: 24, // Larger font size for emphasis
     fontWeight: "bold",
-    color: "#fff", // Dark text for contrast
     marginBottom: 8, // Spacing below the name
   },
   profileEmail: {
     fontSize: 16,
-    color: "#ccc", // Lighter color for secondary text
   },
 
   profileText: {
     fontSize: 22,
     fontWeight: "bold",
-    color: "#FFFFFF",
     marginBottom: 12,
   },
   cards: {
@@ -142,12 +130,23 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   logoutButtonContainer: {
-    marginTop: 20,
-    borderRadius: 8,
-    width: "75%",
-    margin: "auto",
-    backgroundColor: "#FF6663",
+    marginTop: 10, // Reduced top margin for smaller spacing
+    alignSelf: "flex-start", // Centers the button container horizontally
   },
+  logoutButton: {
+    paddingVertical: 6, // Smaller vertical padding for a compact button
+    paddingHorizontal: 12, // Smaller horizontal padding for a compact button
+    backgroundColor: "#392F5A", // Customize with your button color
+    borderRadius: 4, // Smaller radius for subtle rounded corners
+    alignItems: "center", // Center the content horizontally
+    justifyContent: "center", // Center the content vertically
+  },
+  logoutButtonText: {
+    fontSize: 14, // Smaller text size
+    fontWeight: "bold", // Keep text bold for visibility
+    color: "#fff", // White text color
+  },
+
   selectedCardContainer: {
     marginTop: 20,
     padding: 16,
